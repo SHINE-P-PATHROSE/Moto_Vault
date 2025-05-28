@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVault - Vehicle Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #1f2937;
+            font-size: 18px;
+        }
+
+        .shield-icon {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: #6b7280;
+            border-radius: 50%;
+        }
+
+        /* Search Bar */
+        .search-container {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 25px;
+            font-size: 16px;
+            background: #f9fafb;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #1f2937;
+            border-bottom-color: #3b82f6;
+        }
+
+        /* Vehicle List */
+        .vehicle-list {
+            padding: 20px;
+            background: #f9fafb;
+            min-height: calc(100vh - 200px);
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .vehicle-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .vehicle-info {
+            flex: 1;
+        }
+
+        .vehicle-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .vehicle-details {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .vehicle-id {
+            color: #374151;
+            font-size: 13px;
+            font-family: monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-kerala { background: #dbeafe; color: #1d4ed8; }
+        .status-tamil-nadu { background: #fef3c7; color: #d97706; }
+        .status-expired { background: #fee2e2; color: #dc2626; }
+
+        .time-left {
+            text-align: right;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .time-left.expired { color: #dc2626; font-weight: 600; }
+        .time-left.urgent { color: #f59e0b; font-weight: 600; }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove { background: #fee2e2; color: #dc2626; }
+        .btn-renew { background: #dcfce7; color: #16a34a; }
+
+        .menu-btn-card {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* Side Menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 201;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .side-menu.active {
+            transform: translateX(0);
+        }
+
+        .menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .menu-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            color: #6b7280;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .close-menu:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #1f2937;
+        }
+
+        .menu-items {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+            color: #1f2937;
+            border-left-color: #3b82f6;
+        }
+
+        .menu-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+            font-weight: 500;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 768px) {
+            .container {
+                border-radius: 12px;
+                margin: 20px auto;
+                max-height: calc(100vh - 40px);
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .header {
+                padding: 20px 32px;
+            }
+
+            .search-container {
+                padding: 20px 32px;
+            }
+
+            .vehicle-list {
+                padding: 32px;
+                max-height: calc(100vh - 300px);
+                overflow-y: auto;
+            }
+
+            .tab-content.active {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                gap: 20px;
+            }
+
+            .vehicle-card {
+                padding: 20px;
+                margin-bottom: 0;
+            }
+
+            .fab {
+                bottom: 32px;
+                right: 32px;
+                width: 64px;
+                height: 64px;
+                font-size: 28px;
+            }
+
+            .tabs {
+                padding: 0 32px;
+            }
+
+            .tab {
+                max-width: 200px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1200px) {
+            .vehicle-list {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .vehicle-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .vehicle-card:nth-child(1) { animation-delay: 0.1s; }
+        .vehicle-card:nth-child(2) { animation-delay: 0.2s; }
+        .vehicle-card:nth-child(3) { animation-delay: 0.3s; }
+        .vehicle-card:nth-child(4) { animation-delay: 0.4s; }
+        .vehicle-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Side Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Side Menu -->
+    <nav class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <span class="menu-title">Menu</span>
+            <button class="close-menu" id="closeMenu">✕</button>
+        </div>
+        <div class="menu-items">
+            <button class="menu-item active">General</button>
+            <button class="menu-item">Life</button>
+            <button class="menu-item">Claims</button>
+            <button class="menu-item">Renewals</button>
+            <button class="menu-item">Become an Agent</button>
+            <button class="menu-item">Resources</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn">☰</button>
+            <div class="logo">
+                <div class="shield-icon">🛡</div>
+                MotoVault
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar"></div>
+                <span>User</span>
+            </div>
+        </header>
+
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search vehicles...">
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active">Applied</button>
+            <button class="tab">Newly</button>
+        </div>
+
+        <!-- Vehicle List -->
+        <div class="vehicle-list" id="vehicleList">
+            <!-- Applied Tab Content -->
+            <div class="tab-content active" id="appliedContent">
+                <!-- Ashwin - 3 Months Left -->
+                <div class="vehicle-card">
+                    <div class="vehicle-avatar" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"%236b7280\"/><text x=\"50\" y=\"60\" font-family=\"Arial\" font-size=\"30\" fill=\"white\" text-anchor=\"middle\">A</text></svg>')"></div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">Ashwin</div>
+                        <div class="vehicle-details">Tambanoor, Trivandrum</div>
+                        <div class="vehicle-id">🚗 KL01AV8317</div>
+                    </div>
+                    <div class="time-left">
+                        <div class="status-badge status-kerala">Kerala</div>
+                        <div style="margin-top: 8px;">3 Month Left</div>
+                    </div>
+                    <button class="menu-btn-card">⋮</button>
+                </div>
+            </div>
+
+            <!-- Newly Tab Content -->
+            <div class="tab-content" id="newlyContent">
+                <!-- Expired Vehicle -->
+                <div class="vehicle-card">
+                    <div class="vehicle-avatar" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"%23dc2626\"/><text x=\"50\" y=\"60\" font-family=\"Arial\" font-size=\"30\" fill=\"white\" text-anchor=\"middle\">SP</text></svg>')"></div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">Shine Pathrose</div>
+                        <div class="vehicle-details">Parassala, Trivandrum</div>
+                        <div class="vehicle-id">🚗 KL01AX1234</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-remove">Remove</button>
+                            <button class="btn btn-renew">Renew</button>
+                        </div>
+                    </div>
+                    <div class="time-left expired">
+                        <div class="status-badge status-kerala">Kerala</div>
+                        <div style="margin-top: 8px;">Expired !</div>
+                    </div>
+                    <button class="menu-btn-card">⋮</button>
+                </div>
+
+                <!-- 2 Days Left -->
+                <div class="vehicle-card">
+                    <div class="vehicle-avatar" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"%23f59e0b\"/><text x=\"50\" y=\"60\" font-family=\"Arial\" font-size=\"30\" fill=\"white\" text-anchor=\"middle\">AR</text></svg>')"></div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">Arul Raj</div>
+                        <div class="vehicle-details">Vettunimadam, Kanyakumari</div>
+                        <div class="vehicle-id">🚗 TN01AV2356</div>
+                    </div>
+                    <div class="time-left urgent">
+                        <div class="status-badge status-tamil-nadu">Tamil Nadu</div>
+                        <div style="margin-top: 8px;">2 Days Left</div>
+                    </div>
+                    <button class="menu-btn-card">⋮</button>
+                </div>
+
+                <!-- 1 Month Left -->
+                <div class="vehicle-card">
+                    <div class="vehicle-avatar" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"%2316a34a\"/><text x=\"50\" y=\"60\" font-family=\"Arial\" font-size=\"30\" fill=\"white\" text-anchor=\"middle\">AJ</text></svg>')"></div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">Angelin Jerin</div>
+                        <div class="vehicle-details">Cheggavelai, Kanyakumari</div>
+                        <div class="vehicle-id">🚗 TN01AV7463</div>
+                    </div>
+                    <div class="time-left">
+                        <div class="status-badge status-tamil-nadu">Tamil Nadu</div>
+                        <div style="margin-top: 8px;">1 Month Left</div>
+                    </div>
+                    <button class="menu-btn-card">⋮</button>
+                </div>
+
+                <!-- 2 Months Left -->
+                <div class="vehicle-card">
+                    <div class="vehicle-avatar" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"%236b7280\"/><text x=\"50\" y=\"60\" font-family=\"Arial\" font-size=\"30\" fill=\"white\" text-anchor=\"middle\">H</text></svg>')"></div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">Haneef</div>
+                        <div class="vehicle-details">Cheggavelai, Kanyakumari</div>
+                        <div class="vehicle-id">🚗 TN01AV5395</div>
+                    </div>
+                    <div class="time-left">
+                        <div class="status-badge status-tamil-nadu">Tamil Nadu</div>
+                        <div style="margin-top: 8px;">2 Month Left</div>
+                    </div>
+                    <button class="menu-btn-card">⋮</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab">+</button>
+    </div>
+
+    <script>
+        // Menu functionality
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenu = document.getElementById('closeMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const sideMenu = document.getElementById('sideMenu');
+
+        function openMenu() {
+            menuOverlay.classList.add('active');
+            sideMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenuFunc() {
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuBtn.addEventListener('click', openMenu);
+        closeMenu.addEventListener('click', closeMenuFunc);
+        menuOverlay.addEventListener('click', closeMenuFunc);
+
+        // Menu item selection
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                closeMenuFunc();
+            });
+        });
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach((tab, index) => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+
+                // Show corresponding content
+                if (index === 0) {
+                    document.getElementById('appliedContent').classList.add('active');
+                } else {
+                    document.getElementById('newlyContent').classList.add('active');
+                }
+            });
+        });
+
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+
+        searchBar.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const activeContent = document.querySelector('.tab-content.active');
+            const vehicleCards = activeContent.querySelectorAll('.vehicle-card');
+
+            vehicleCards.forEach(card => {
+                const name = card.querySelector('.vehicle-name').textContent.toLowerCase();
+                const details = card.querySelector('.vehicle-details').textContent.toLowerCase();
+                const vehicleId = card.querySelector('.vehicle-id').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || details.includes(searchTerm) || vehicleId.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // FAB click handler
+        document.querySelector('.fab').addEventListener('click', function() {
+            alert('Add new vehicle functionality would be implemented here');
+        });
+
+        // Menu button handlers
+        document.querySelectorAll('.menu-btn-card').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Vehicle options menu would appear here');
+            });
+        });
+
+        // Action button handlers
+        document.querySelectorAll('.btn-remove').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to remove this vehicle?')) {
+                    this.closest('.vehicle-card').style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => {
+                        this.closest('.vehicle-card').remove();
+                    }, 300);
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-renew').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Renewal process would start here');
+            });
+        });
+
+        // Add fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(-100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMenuFunc();
+            }
+        });
+    </script>
+</body>
+</html>

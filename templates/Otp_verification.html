@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVault - Confirmation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5e6d3 0%, #f0d4c7 50%, #e8c4c4 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0 40px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shield-icon {
+            width: 32px;
+            height: 32px;
+            background: #2563eb;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .shield-icon::before {
+            content: '';
+            width: 18px;
+            height: 20px;
+            background: white;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .confirmation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .smiley-icon {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .smiley-icon::before {
+            content: ':)';
+            font-size: 14px;
+            color: #666;
+        }
+
+        .confirmation-title {
+            font-size: 18px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 0;
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            background: transparent;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-bottom-color: #2563eb;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            padding: 8px;
+            color: #666;
+            font-size: 18px;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .eye-icon:hover {
+            color: #2563eb;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 18px;
+            background: #f8f8f8;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .continue-btn:hover {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+
+        .background-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .decoration-circle:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .decoration-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            bottom: -75px;
+            left: -75px;
+            animation-delay: 2s;
+        }
+
+        .decoration-circle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            right: -50px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Desktop/PC View */
+        @media (min-width: 768px) {
+            body {
+                padding: 40px;
+            }
+
+            .container {
+                max-width: 500px;
+            }
+
+            .form-container {
+                padding: 50px 40px;
+                border-radius: 24px;
+            }
+
+            .logo-text {
+                font-size: 28px;
+            }
+
+            .shield-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .shield-icon::before {
+                width: 20px;
+                height: 22px;
+            }
+
+            .confirmation-title {
+                font-size: 20px;
+            }
+
+            .smiley-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .input-field {
+                font-size: 18px;
+                padding: 18px 0;
+            }
+
+            .continue-btn {
+                padding: 20px;
+                font-size: 18px;
+                border-radius: 16px;
+            }
+
+            .footer {
+                font-size: 14px;
+                margin-top: 40px;
+            }
+        }
+
+        /* Large Desktop View */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 600px;
+            }
+
+            .form-container {
+                padding: 60px 50px;
+            }
+
+            .decoration-circle:nth-child(1) {
+                width: 300px;
+                height: 300px;
+                top: -150px;
+                right: -150px;
+            }
+
+            .decoration-circle:nth-child(2) {
+                width: 250px;
+                height: 250px;
+                bottom: -125px;
+                left: -125px;
+            }
+        }
+
+        /* Small Mobile View */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .form-container {
+                padding: 30px 25px;
+                border-radius: 16px;
+            }
+
+            .header {
+                padding-bottom: 30px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .shield-icon {
+                width: 28px;
+                height: 28px;
+            }
+
+            .confirmation-title {
+                font-size: 16px;
+            }
+
+            .input-field {
+                font-size: 16px;
+                padding: 12px 0;
+            }
+
+            .continue-btn {
+                padding: 16px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-decoration">
+        <div class="decoration-circle"></div>
+        <div class="decoration-circle"></div>
+        <div class="decoration-circle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="shield-icon"></div>
+                <span class="logo-text">MotoVault</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="confirmation-header">
+                <div class="smiley-icon"></div>
+                <span class="confirmation-title">Confirmation</span>
+            </div>
+
+            <form>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="OTP (Email)" maxlength="6">
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="OTP (Mobile)" maxlength="6">
+                </div>
+
+                <div class="input-group password-field">
+                    <input type="password" class="input-field" placeholder="Re Enter Password" id="passwordField">
+                    <span class="eye-icon" onclick="togglePassword()">👁</span>
+                </div>
+
+                <button type="submit" class="continue-btn">Continue</button>
+            </form>
+        </div>
+
+        <div class="footer">
+            Shine Private Limited
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('passwordField');
+            const eyeIcon = document.querySelector('.eye-icon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.textContent = '👁';
+            }
+        }
+
+        // Enhanced form interactions
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderBottomColor = '#2563eb';
+                this.parentNode.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.style.borderBottomColor = '#e0e0e0';
+                }
+                this.parentNode.style.transform = 'translateY(0)';
+            });
+
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    this.style.borderBottomColor = '#10b981';
+                } else {
+                    this.style.borderBottomColor = '#2563eb';
+                }
+            });
+        });
+
+        // Enhanced continue button with loading state
+        document.querySelector('.continue-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Check if all fields are filled
+            const inputs = document.querySelectorAll('.input-field');
+            let allFilled = true;
+
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                    input.style.borderBottomColor = '#ef4444';
+                    input.style.animation = 'shake 0.5s ease-in-out';
+                }
+            });
+
+            if (allFilled) {
+                this.style.background = '#2563eb';
+                this.style.color = 'white';
+                this.style.transform = 'translateY(0)';
+                this.textContent = 'Processing...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.style.background = '#10b981';
+                    this.textContent = '✓ Verified';
+
+                    setTimeout(() => {
+                        this.style.background = '#f8f8f8';
+                        this.style.color = '#666';
+                        this.textContent = 'Continue';
+                        this.disabled = false;
+                    }, 2000);
+                }, 1500);
+            }
+        });
+
+        // Add shake animation for validation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
