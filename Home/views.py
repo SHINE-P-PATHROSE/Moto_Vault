@@ -2,9 +2,19 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Vehicle
 
+
+@login_required
 def home(request):
-    return render(request, 'Home_page.html')
+    if request.user.is_superuser:
+        vehicles = Vehicle.objects.all()  # Superuser sees all
+    else:
+        vehicles = Vehicle.objects.filter(owner=request.user)  # Others see only their own
+
+    context = {'vehicles': vehicles}
+    return render(request, 'sample_home.html')
 
 def login_page(request):
     if request.method == 'POST':

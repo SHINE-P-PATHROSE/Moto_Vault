@@ -1,0 +1,35 @@
+{% load static %}
+
+<!-- Replace static image references -->
+<img src="#" alt="MotoVault Logo" class="logo-image">
+
+<!-- Update user profile section -->
+<div class="user-profile">
+    <div class="user-avatar">{{ user.username|first|upper }}</div>
+    <span>{{ user.username }}</span>
+</div>
+
+<!-- Dynamic vehicle list -->
+<div class="vehicle-list">
+    {% for vehicle in vehicles %}
+    <div class="vehicle-card">
+        <div class="vehicle-avatar">{{ vehicle.vehicle_name|first|upper }}</div>
+        <div class="vehicle-info">
+            <div class="vehicle-name">{{ vehicle.vehicle_name }}</div>
+            <div class="vehicle-details">{{ vehicle.location }}</div>
+            <div class="vehicle-id">🚗 {{ vehicle.registration_number }}</div>
+            {% if vehicle.status == 'expired' %}
+            <div class="action-buttons">
+                <button class="btn btn-remove">Remove</button>
+                <button class="btn btn-renew">Renew</button>
+            </div>
+            {% endif %}
+        </div>
+        <div class="time-left {% if vehicle.status == 'expired' %}expired{% elif vehicle.status == 'urgent' %}urgent{% endif %}">
+            <div class="status-badge status-{{ vehicle.state|lower }}">{{ vehicle.get_state_display }}</div>
+            <div style="margin-top: 8px;">{{ vehicle.get_status_display }}</div>
+        </div>
+        <button class="menu-btn-card">⋮</button>
+    </div>
+    {% endfor %}
+</div>
